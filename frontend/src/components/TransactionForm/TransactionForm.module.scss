@@ -1,0 +1,77 @@
+@use "../../styles/variables.scss" as *;
+@use "sass:color";
+
+.transaction-form {
+  background-color: $background-color;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: $font-family;
+  max-width: 500px;
+  margin: 32px auto;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .formGroup {
+    margin-bottom: 1.5rem;
+
+    label {
+      font-weight: 600;
+      color: $text-color;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid color.adjust($background-color, $lightness: -20%);
+      border-radius: 5px;
+      background-color: color.scale($background-color, $lightness: 5%);
+      font-size: 1rem;
+      color: $text-color;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 5px rgba($primary-color, 0.3);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .error {
+      color: $error-color;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+  }
+
+  .button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background-color: color.adjust($primary-color, $lightness: -10%);
+    }
+  }
+}

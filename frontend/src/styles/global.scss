@@ -1,0 +1,46 @@
+/* src/styles/global.scss */
+@use 'sass:color';
+@use './variables' as *;
+
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  background-color: $background-color;
+  color: $text-color;
+}
+
+h2 {
+  color: $primary-color;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .link {
+      margin-right: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .button {
+      margin-left: 0;
+    }
+  }
+}

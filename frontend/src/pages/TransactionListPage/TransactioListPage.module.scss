@@ -1,0 +1,54 @@
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.container {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: $background-color;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .error {
+    color: $error-color;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  
+    th {
+      background-color: $primary-color;
+      color: #fff;
+    }
+  
+    tr:hover {
+      background-color: color.adjust($primary-color, $lightness: 40%);
+    }
+  
+    .income {
+      color: $primary-color;
+      font-weight: bold;
+    }
+  
+    .expense {
+      color: $secondary-color;
+      font-weight: bold;
+    }
+  
+    @media (max-width: 600px) {
+      th, td {
+        padding: 0.5rem;
+      }
+    }
+  }
+  

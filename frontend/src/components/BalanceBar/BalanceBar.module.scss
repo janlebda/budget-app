@@ -1,0 +1,65 @@
+@use "../../styles/variables.scss" as *;
+
+.balanceBar {
+  background-color: $background-color;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-family: $font-family;
+  font-size: 1rem;
+  color: $text-color;
+}
+
+.inlineWrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.summary {
+  font-size: 1rem;
+
+  .label {
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+
+  .value {
+    font-weight: bold;
+    color: $primary-color;
+  }
+
+  .expense {
+    font-weight: bold;
+    color: #e74c3c;
+  }
+
+  .income {
+    font-weight: bold;
+    color: #2ecc71;
+  }
+}
+
+.rangeSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  select {
+    padding: 0.4rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-family: $font-family;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+}

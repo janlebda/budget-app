@@ -1,0 +1,120 @@
+# GraphQL schema definition for the financial tracking application
+# ------------------- Transaction Type Definition -------------------
+type Transaction {
+    id: ID!
+    amount: Float!
+    type: String!
+    tags: String!
+    notes: String
+    timestamp: String
+}
+
+# Input type corresponding to the class TransactionDTO
+input TransactionInput {
+    amount: Float!
+    type: String!
+    tags: String!
+    notes: String
+}
+
+# ------------------- User Type Definition -------------------
+type User {
+    id: ID!
+    email: String!
+    username: String!
+}
+
+# ------------------- Groups Type Definition -------------------
+type Group {
+    id: ID!
+    name: String!
+    ownerId: ID!
+}
+
+input GroupInput {
+    name: String!
+}
+
+# ------------------- Group Transaction Type Definition -------------------
+input GroupTransactionInput {
+    groupId: ID!
+    amount: Float!
+    type: String! # "INCOME" or "EXPENSE"
+    title: String!
+    selectedUserIds: [ID!] # List of user IDs to share the transaction with
+}
+
+# ------------------- Balance DTO Type Definition -------------------
+type BalanceDto {
+    totalIncome: Float!
+    totalExpense: Float!
+    balance: Float!
+}
+
+# ------------------- Membership Type Definition -------------------
+type Membership {
+    id: ID!
+    groupId: ID!
+    userId: ID!
+    userEmail: String!
+}
+
+input MembershipInput {
+    userEmail: String!
+    groupId: ID!
+}
+
+# ------------------- Debt Type Definition -------------------
+type Debt {
+    id: ID!
+    amount: Float!
+    title: String!
+    paidByDebtor: Boolean!
+    confirmedByCreditor: Boolean!
+    debtor: User!
+    creditor: User!
+    group: Group!
+}
+
+input DebtInput {
+    debtorId: ID!
+    creditorId: ID!
+    groupId: ID!
+    amount: Float!
+    title: String!
+}
+
+# ------------------- Query Definitions -------------------
+type Query {
+    transactions: [Transaction]
+    userBalance(days: Float): BalanceDto
+    groups: [Group!]!
+    myGroups: [Group]
+    groupMembers(groupId: ID!): [Membership!]!
+    groupDebts(groupId: ID!): [Debt!]!
+}
+
+# ------------------- Mutation Definitions -------------------
+type Mutation {
+    # Transaction mutations
+    addTransaction(transactionDTO: TransactionInput!): Transaction
+    updateTransaction(id: ID!, transactionDTO: TransactionInput!): Transaction
+    deleteTransaction(id: ID!): Boolean
+
+    # Group mutations
+    createGroup(groupDTO: GroupInput!): Group!
+    deleteGroup(id: ID!): Boolean!
+
+    # Membership mutations
+    addMember(membershipDTO: MembershipInput!): Membership!
+    removeMember(membershipId: ID!): Boolean!
+
+    # Debt mutations
+    createDebt(debtDTO: DebtInput!): Debt!
+    deleteDebt(debtId: ID!): Boolean!
+    markDebtAsPaid(debtId: ID!): Debt!
+    confirmDebtPayment(debtId: ID!): Debt!
+
+    # Group transaction mutations
+    addGroupTransaction(groupTransactionDTO: GroupTransactionInput!): Boolean
+}

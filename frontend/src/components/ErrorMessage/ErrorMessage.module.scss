@@ -1,0 +1,10 @@
+/* src/components/ErrorMessage/ErrorMessage.module.scss */
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.error {
+    color: $error-color;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+  

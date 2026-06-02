@@ -1,0 +1,52 @@
+/* src/pages/RegisterPage/RegisterPage.module.scss */
+
+@use 'sass:color';
+@use '../../styles/variables' as *;
+
+.container {
+  max-width: 400px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: $background-color;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+    box-shadow: 0 0 5px rgba($primary-color, 0.5);
+  }
+}
+
+.button {
+  background-color: $primary-color;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+  }
+}

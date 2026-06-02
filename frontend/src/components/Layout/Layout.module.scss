@@ -1,0 +1,16 @@
+/* src/components/Layout/Layout.module.scss */
+@use '../../styles/variables.scss' as *;
+@use 'sass:color';
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main {
+    flex: 1;
+    padding: 2rem;
+    background-color: #eaeaea;
+  }
+  

@@ -1,0 +1,320 @@
+@use "../../styles/variables.scss" as *;
+@use "sass:color";
+
+.container {
+  background-color: $background-color;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: $font-family;
+  max-width: 800px;
+  margin: 2rem auto;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+}
+
+.form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  input {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid color.adjust($background-color, $lightness: -20%);
+    border-radius: 8px;
+    background-color: color.scale($background-color, $lightness: 5%);
+    color: $text-color;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 6px rgba($primary-color, 0.4);
+    }
+  }
+
+  button {
+    padding: 0.8rem 1.2rem;
+    background-color: $primary-color;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1rem;
+
+    &:hover {
+      background-color: color.adjust($primary-color, $lightness: -10%);
+    }
+  }
+}
+
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.groupItem {
+  background-color: color.scale($background-color, $lightness: 5%);
+  padding: 1.2rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: $text-color;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.deleteButton {
+  padding: 0.5rem 1rem;
+  background-color: $secondary-color;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: color.adjust($secondary-color, $lightness: -10%);
+  }
+}
+
+.backButton {
+  background-color: gray;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: darkgray;
+  }
+}
+
+.memberList {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+
+  li {
+    padding: 0.8rem;
+    background-color: color.scale($background-color, $lightness: 5%);
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+
+    button {
+      padding: 0.4rem 0.8rem;
+      background-color: $secondary-color;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+      font-size: 0.9rem;
+
+      &:hover {
+        background-color: color.adjust($secondary-color, $lightness: -10%);
+      }
+    }
+  }
+}
+
+.adminLabel {
+  margin-left: 8px;
+  color: $primary-color;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.errorMessage {
+  color: $secondary-color;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.infoMessage {
+  color: $text-color;
+  background-color: rgba($primary-color, 0.08);
+  border-left: 4px solid $primary-color;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.debtsSection {
+  margin-top: 2rem;
+  background-color: color.scale($background-color, $lightness: 3%);
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+}
+
+.debtForm {
+  margin-top: 2rem;
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+}
+
+.debtsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid color.adjust($background-color, $lightness: -15%);
+    color: $text-color;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+
+    strong {
+      font-weight: 700;
+    }
+
+    button {
+      margin-left: auto;
+    }
+  }
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.statusOpen {
+  background-color: rgba($secondary-color, 0.12);
+  color: color.adjust($secondary-color, $lightness: -15%);
+}
+
+.statusPending {
+  background-color: rgba(#f59e0b, 0.16);
+  color: #92400e;
+}
+
+.statusPaid {
+  background-color: rgba($primary-color, 0.16);
+  color: color.adjust($primary-color, $lightness: -20%);
+}
+
+.debtorName {
+  color: #2563eb;
+}
+
+.creditorName {
+  color: #16a34a;
+}
+
+.input {
+  padding: 0.8rem;
+  border: 1px solid color.adjust($background-color, $lightness: -20%);
+  border-radius: 5px;
+  background-color: color.scale($background-color, $lightness: 5%);
+  font-size: 1rem;
+  color: $text-color;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 5px rgba($primary-color, 0.3);
+  }
+}
+
+.button {
+  padding: 0.8rem 1.2rem;
+  background-color: $primary-color;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 1rem;
+
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+  }
+}
+
+.formsContainer {
+  display: flex;
+  margin-top: 8px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.participants {
+  flex: 1 1 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid color.adjust($background-color, $lightness: -15%);
+  border-radius: 8px;
+
+  legend {
+    padding: 0 0.35rem;
+    color: $primary-color;
+    font-weight: 700;
+  }
+}
+
+.participantOption {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  color: $text-color;
+  font-size: 0.95rem;
+
+  span {
+    overflow-wrap: anywhere;
+  }
+}
