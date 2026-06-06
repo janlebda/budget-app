@@ -51,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Błąd parseowania tokena JWT: " + e.getMessage());
+                LOGGER.warn("Błąd parseowania tokena JWT: {}", e.getMessage(), e);
             }
         }
         filterChain.doFilter(request, response);

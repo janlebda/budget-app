@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import React, { useMemo, useState } from "react";
 import { Id, groupsApi } from "../../api/groupsApi";
 import { useBalance } from "../../components/BalanceBar/useBalance";
 import { useAuth } from "../../context/AuthContext";
@@ -61,7 +61,7 @@ const AddGroupTransaction = ({
     );
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsedAmount = Number(amount);
     const uniqueSelectedUserIds = Array.from(

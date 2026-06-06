@@ -32,7 +32,7 @@ jobs:
 
       - name: Build backend
         working-directory: backend
-        run: mvn clean install -DskipTests
+        run: mvn clean verify
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

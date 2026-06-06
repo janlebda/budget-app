@@ -80,7 +80,7 @@ public class DebtService {
     public void deleteDebt(Long debtId) {
         Debt debt = debtRepository.findById(debtId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Nie można usunąć długu. Dług o ID " + debtId + " nie istnieje."));
+                        "Nie można usunąć długu. Dług o ID " + debtId + DOES_NOT_EXIST_SUFFIX));
 
         membershipService.assertCurrentUserIsGroupMember(debt.getGroup().getId());
         User currentUser = currentUserService.getCurrentUser();
