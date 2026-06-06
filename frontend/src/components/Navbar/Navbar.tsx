@@ -27,7 +27,13 @@ const Navbar = () => {
           )}
         </div>
         <div className={styles["nav-container"]}>
-          {!isAuthenticated ? (
+          {isAuthenticated ? (
+            <li>
+              <button onClick={logout} className={styles.logout}>
+                Wyloguj
+              </button>
+            </li>
+          ) : (
             <>
               <li>
                 <Link to="/login">Logowanie</Link>
@@ -36,12 +42,6 @@ const Navbar = () => {
                 <Link to="/register">Rejestracja</Link>
               </li>
             </>
-          ) : (
-            <li>
-              <button onClick={logout} className={styles.logout}>
-                Wyloguj
-              </button>
-            </li>
           )}
         </div>
       </ul>

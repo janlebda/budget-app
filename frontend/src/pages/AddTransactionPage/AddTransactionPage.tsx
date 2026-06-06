@@ -1,5 +1,5 @@
 // src/pages/AddTransactionPage/AddTransactionPage.tsx
-import { useState, type FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Transaction, transactionsApi } from '../../api/transactionsApi';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
@@ -33,7 +33,7 @@ const AddTransactionPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 

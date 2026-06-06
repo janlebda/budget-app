@@ -9,6 +9,7 @@ import pk.jl.pasir_lebda_jan.model.User;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,11 +39,12 @@ public class JwtUtil {
         claims.put("id", user.getId());
         claims.put("email", user.getEmail());
 
+        Instant now = Instant.now();
         return Jwts.builder()
                 .claims(claims)
                 .subject(user.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusMillis(EXPIRATION_MS)))
                 .signWith(key, Jwts.SIG.HS512)
                 .compact();
     }

@@ -48,8 +48,9 @@ const TransactionForm = () => {
       <h2>Dodaj Transakcję</h2>
 
       <div className={styles.formGroup}>
-        <label>Kwota:</label>
+        <label htmlFor="transaction-amount">Kwota:</label>
         <input
+          id="transaction-amount"
           type="number"
           step="0.01"
           placeholder="Kwota"
@@ -69,8 +70,9 @@ const TransactionForm = () => {
       </div>
 
       <div className={styles.formGroup}>
-        <label>Typ:</label>
+        <label htmlFor="transaction-type">Typ:</label>
         <select
+          id="transaction-type"
           {...register("type", {
             required: "Typ transakcji jest wymagany",
             validate: (val) =>
@@ -88,8 +90,9 @@ const TransactionForm = () => {
       </div>
 
       <div className={styles.formGroup}>
-        <label>Tagi:</label>
+        <label htmlFor="transaction-tags">Tagi:</label>
         <input
+          id="transaction-tags"
           type="text"
           {...register("tags", {
             required: "Tagi są wymagane",
@@ -109,8 +112,9 @@ const TransactionForm = () => {
       </div>
 
       <div className={styles.formGroup}>
-        <label>Notatki:</label>
+        <label htmlFor="transaction-notes">Notatki:</label>
         <textarea
+          id="transaction-notes"
           {...register("notes", {
             maxLength: {
               value: 200,

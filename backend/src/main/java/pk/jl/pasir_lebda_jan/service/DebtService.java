@@ -11,10 +11,12 @@ import pk.jl.pasir_lebda_jan.repository.TransactionRepository;
 import pk.jl.pasir_lebda_jan.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
 public class DebtService {
+    private static final String DOES_NOT_EXIST_SUFFIX = " nie istnieje.";
 
     private final DebtRepository debtRepository;
     private final GroupRepository groupRepository;
@@ -46,13 +48,13 @@ public class DebtService {
     public Debt createDebt(DebtDTO debtDTO) {
         Group group = groupRepository.findById(debtDTO.getGroupId())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Nie można utworzyć długu. Grupa o ID " + debtDTO.getGroupId() + " nie istnieje."));
+                        "Nie można utworzyć długu. Grupa o ID " + debtDTO.getGroupId() + DOES_NOT_EXIST_SUFFIX));
         User debtor = userRepository.findById(debtDTO.getDebtorId())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Nie można utworzyć długu. Dłużnik o ID " + debtDTO.getDebtorId() + " nie istnieje."));
+                        "Nie można utworzyć długu. Dłużnik o ID " + debtDTO.getDebtorId() + DOES_NOT_EXIST_SUFFIX));
         User creditor = userRepository.findById(debtDTO.getCreditorId())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Nie można utworzyć długu. Wierzyciel o ID " + debtDTO.getCreditorId() + " nie istnieje."));
+                        "Nie można utworzyć długu. Wierzyciel o ID " + debtDTO.getCreditorId() + DOES_NOT_EXIST_SUFFIX));
 
         membershipService.assertCurrentUserIsGroupMember(group.getId());
         membershipService.assertUserIsGroupMember(group.getId(), debtor.getId());
@@ -128,11 +130,7 @@ Transaction creditorTx = new Transaction();
 creditorTx.setAmount(debt.getAmount());
 creditorTx.setType(TransactionType.INCOME);
 creditorTx.setUser(debt.getCreditor());
-creditorTx.setTimestamp(LocalDateTime.now());
-creditorTx.setNotes("Splat długu od " + debt.getDebtor().getEmail() + ": " + debt.getTitle());
-creditorTx.setTags("DebtSettlement");
-transactionRepository.save(creditorTx);
-
+        creditorTx.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
 // Dłużnik oddaje pieniądze (EXPENSE)
 Transaction debtorTx = new Transaction();
 debtorTx.setAmount(debt.getAmount());

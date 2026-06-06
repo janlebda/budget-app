@@ -1,8 +1,11 @@
 package pk.jl.pasir_lebda_jan.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,8 @@ import pk.jl.pasir_lebda_jan.repository.UserRepository;
 
 @Service
 public class TransactionService {
+    private static final String TRANSACTION_NOT_FOUND_MSG = "Transaction not found with id: ";
+
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
@@ -26,9 +31,9 @@ public class TransactionService {
     }
 
     public User getCurrentUser() {
-        var authentication =SecurityContextHolder.getContext().getAuthentication();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
-            throw new RuntimeException("No authenticated user found");
+            throw new AuthenticationCredentialsNotFoundException("No authenticated user found");
         }
         String email = authentication.getName();
         return userRepository.findByEmail(email)
@@ -43,18 +48,18 @@ public class TransactionService {
 
     public Transaction getTransactionById(Long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRANSACTION_NOT_FOUND_MSG + id));
     }
 
     public BalanceDTO getUserBalance(User user, Float days) {
-    List<Transaction> transactions;
+        List<Transaction> transactions;
 
-    if (days != null) {
-        LocalDateTime from = LocalDateTime.now().minusDays(days.longValue());
-        transactions = transactionRepository.findAllByUserAndTimestampGreaterThanEqual(user, from);
-    } else {
-        transactions = transactionRepository.findByUser(user);
-    }
+        if (days != null) {
+            LocalDateTime from = LocalDateTime.now(ZoneId.systemDefault()).minusDays(days.longValue());
+            transactions = transactionRepository.findAllByUserAndTimestampGreaterThanEqual(user, from);
+        } else {
+            transactions = transactionRepository.findByUser(user);
+        }
 
     double income = transactions.stream()
             .filter(t -> t.getType() == TransactionType.INCOME)
@@ -71,10 +76,10 @@ public class TransactionService {
 
     public Transaction updateTransaction(Long id, TransactionDTO transactionDTO) {
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRANSACTION_NOT_FOUND_MSG + id));
 
         if (!transaction.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Unauthorized to update this transaction");
+            throw new AccessDeniedException("Unauthorized to update this transaction");
         }
 
         transaction.setAmount(transactionDTO.getAmount());
@@ -91,13 +96,13 @@ public class TransactionService {
         transaction.setTags(transactionDTO.getTags());
         transaction.setNotes(transactionDTO.getNotes());
         transaction.setUser(getCurrentUser());
-        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
         return transactionRepository.save(transaction);
     }
 
     public Boolean deleteTransaction(Long id) {
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRANSACTION_NOT_FOUND_MSG + id));
         transactionRepository.delete(transaction);
         return null;
     }

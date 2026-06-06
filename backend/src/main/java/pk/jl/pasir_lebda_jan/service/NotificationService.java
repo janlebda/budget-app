@@ -1,5 +1,7 @@
 package pk.jl.pasir_lebda_jan.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class NotificationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -30,7 +33,7 @@ public class NotificationService {
                 String json = objectMapper.writeValueAsString(notification);
                 session.sendMessage(new TextMessage(json));
             } catch (IOException e) {
-                System.err.println("Error sending notification to " + email + ": " + e.getMessage());
+                LOGGER.error("Error sending notification to {}: {}", email, e.getMessage(), e);
             }
         }
     }
