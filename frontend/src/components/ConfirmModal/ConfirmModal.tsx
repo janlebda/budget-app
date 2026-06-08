@@ -21,7 +21,6 @@ const ConfirmModal = ({
   onCancel,
 }: ConfirmModalProps) => {
   
-  // Obsługa klawisza Escape w sposób dostępny dla czytników i klawiatury
   useEffect(() => {
     if (!visible) return;
 
@@ -38,20 +37,22 @@ const ConfirmModal = ({
   if (!visible) return null;
 
   return (
-    // aria-hidden="true" sprawia, że tło jest ignorowane przez czytniki, 
-    // rozwiązując błąd "Non-interactive elements should not be assigned... listeners"
-    <div 
-      className={styles.modalOverlay} 
-      onClick={onCancel} 
-      aria-hidden="true"
-    >
+    <div className={styles.modalOverlay}>
+      {/* Natywny przycisk tła wykorzystujący klasę ze Stylesheets.
+        SonarCloud widzi poprawny, interaktywny element HTML i zamyka błędy S6847 oraz S1082!
+      */}
+      <button
+        type="button"
+        className={styles.backdropButton}
+        aria-label="Zamknij okno potwierdzenia"
+        onClick={onCancel}
+      />
+
       <dialog
         className={styles.modal}
         open
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        // Zatrzymujemy propagację, aby kliknięcie w modal nie zamykało go
-        onClick={(e) => e.stopPropagation()}
       >
         <h3 id="confirm-modal-title">{title}</h3>
         <p>{message}</p>

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
-    private final static Logger LOGGER = LoggerFactory.getLogger(JwtAuthFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     public JwtAuthFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
