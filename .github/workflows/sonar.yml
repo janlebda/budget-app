@@ -58,6 +58,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.java.binaries=backend/target/classes
-            -Dsonar.java.libraries=backend/target/dependency
+            -Dsonar.java.binaries=${{ github.workspace }}/backend/target/classes
+            -Dsonar.java.libraries=${{ github.workspace }}/backend/target/dependency
             -Dsonar.coverage.exclusions=**/*
