@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import styles from "./ConfirmModal.module.scss";
 
 interface ConfirmModalProps {
