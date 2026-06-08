@@ -14,7 +14,8 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  // POPRAWKA S1874: Zamiana React.FormEvent na React.SyntheticEvent
+  const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     try {

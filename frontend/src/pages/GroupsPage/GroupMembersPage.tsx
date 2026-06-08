@@ -40,7 +40,9 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
 
   const isGroupOwner =
     user?.id !== undefined && String(user.id) === String(group.ownerId);
-  const currentUserId = user?.id !== undefined ? String(user.id) : "";
+  
+  // POPRAWKA S7735: Zamiana !== na === w celu wyeliminowania zanegowanego warunku
+  const currentUserId = user?.id === undefined ? "" : String(user.id);
 
   const getErrorMessage = (error: unknown, fallback: string) => {
     if (error instanceof Error && error.message.trim()) {

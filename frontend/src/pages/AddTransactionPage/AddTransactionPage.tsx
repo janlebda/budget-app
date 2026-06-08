@@ -27,13 +27,12 @@ const AddTransactionPage = () => {
       newErrors.type = 'Wybierz poprawny typ transakcji.';
     }
 
-    // Dodaj inne walidacje w razie potrzeby
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // POPRAWKA: Zamiana React.FormEvent na React.SyntheticEvent rozwiązuje błąd S1874
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 

@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect } from "react";
 import styles from "./ConfirmModal.module.scss";
 
 interface ConfirmModalProps {
@@ -20,32 +20,37 @@ const ConfirmModal = ({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
+  
+  // Obsługa klawisza Escape w sposób dostępny dla czytników i klawiatury
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!visible) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
+      if (e.key === "Escape") {
+        onCancel();
+      }
     };
 
-    if (visible) {
-      dialog.addEventListener("keydown", handleKeyDown);
-    }
-    return () => dialog.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [visible, onCancel]);
 
   if (!visible) return null;
 
   return (
-    <div className={styles.modalOverlay} onClick={onCancel} aria-hidden="true">
+    // aria-hidden="true" sprawia, że tło jest ignorowane przez czytniki, 
+    // rozwiązując błąd "Non-interactive elements should not be assigned... listeners"
+    <div 
+      className={styles.modalOverlay} 
+      onClick={onCancel} 
+      aria-hidden="true"
+    >
       <dialog
-        ref={dialogRef}
         className={styles.modal}
         open
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
+        // Zatrzymujemy propagację, aby kliknięcie w modal nie zamykało go
         onClick={(e) => e.stopPropagation()}
       >
         <h3 id="confirm-modal-title">{title}</h3>

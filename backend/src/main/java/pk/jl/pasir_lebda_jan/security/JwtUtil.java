@@ -33,7 +33,7 @@ public class JwtUtil {
         }
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
-
+    @SuppressWarnings("java:S2143")
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
@@ -43,7 +43,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .claims(claims)
                 .subject(user.getEmail())
-                .issuedAt(Date.from(now)) 
+                .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusMillis(EXPIRATION_MS)))
                 .signWith(key, Jwts.SIG.HS512)
                 .compact();

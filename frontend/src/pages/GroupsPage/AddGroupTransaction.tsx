@@ -30,7 +30,9 @@ const AddGroupTransaction = ({
   const [selectedUserIds, setSelectedUserIds] = useState<Id[]>([]);
   const [hasCustomParticipants, setHasCustomParticipants] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const currentUserId = user?.id !== undefined ? String(user.id) : "";
+  
+  // POPRAWKA S7735: Usunięcie negacji !== z operatora trójskładnikowego
+  const currentUserId = user?.id === undefined ? "" : String(user.id);
 
   const memberIds = useMemo(() => members.map((member) => member.userId), [members]);
   const effectiveSelectedUserIds = useMemo(() => {
@@ -60,7 +62,8 @@ const AddGroupTransaction = ({
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // POPRAWKA S1874: Zamiana React.FormEvent na React.SyntheticEvent
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsedAmount = Number(amount);
     const uniqueSelectedUserIds = Array.from(

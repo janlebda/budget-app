@@ -4,10 +4,17 @@ import styles from "./TransactionList.module.scss";
 import { toast } from "react-toastify";
 import graphqlClient from "../../api/graphClient";
 import { useBalance } from "../BalanceBar/useBalance";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
 
 interface TransactionsResponse {
   transactions: Transaction[];
 }
+
+// Słownik mapujący typy transakcji - dzięki temu unikamy zagnieżdżonych ternaries (błąd S3358)
+const TRANSACTION_TYPES: Record<string, string> = {
+  INCOME: "Przychód",
+  EXPENSE: "Wydatek",
+};
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -216,10 +223,9 @@ const TransactionList = () => {
                       <p className={styles.error}>{editErrors.type}</p>
                     )}
                   </>
-                ) : transaction.type === "INCOME" ? (
-                  "Przychód"
                 ) : (
-                  "Wydatek"
+                  // Bezpieczne mapowanie typu bez zagnieżdżonych warunków logicznych
+                  TRANSACTION_TYPES[transaction.type] || transaction.type
                 )}
               </td>
               <td>
@@ -289,24 +295,16 @@ const TransactionList = () => {
         </tbody>
       </table>
 
-      {showDeleteModal && (
-        <div className={styles["modal"]}>
-          <div className={styles["modal-content"]}>
-            <p>Czy na pewno chcesz usunąć transakcję?</p>
-            <div className={styles["modal-buttons"]}>
-              <button className={styles["confirm"]} onClick={deleteTransaction}>
-                Tak
-              </button>
-              <button
-                className={styles["cancel"]}
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Anuluj
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Wykorzystanie nowego, reużywalnego komponentu ConfirmModal zgodnie z zasadą DRY */}
+      <ConfirmModal
+        visible={showDeleteModal}
+        title="Potwierdź usunięcie"
+        message="Czy na pewno chcesz usunąć tę transakcję?"
+        confirmLabel="Tak"
+        cancelLabel="Anuluj"
+        onConfirm={deleteTransaction}
+        onCancel={() => setShowDeleteModal(false)}
+      />
     </div>
   );
 };

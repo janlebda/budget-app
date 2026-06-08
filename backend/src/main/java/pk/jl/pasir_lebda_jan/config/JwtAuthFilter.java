@@ -13,15 +13,19 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import pk.jl.pasir_lebda_jan.security.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final static Logger LOGGER = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     public JwtAuthFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        
     }
 
     @Override
@@ -47,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Błąd parseowania tokena JWT: " + e.getMessage());
+                LOGGER.error("Błąd podczas przetwarzania tokena JWT: {}", e.getMessage());
             }
         }
         filterChain.doFilter(request, response);
