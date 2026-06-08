@@ -43,10 +43,10 @@ const RegisterPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // POPRAWKA S1874: Zamiana React.FormEvent na React.SyntheticEvent
+  // Poprawka SonarCloud S1874: Zamiana React.FormEvent na React.SyntheticEvent
   const handleRegister = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({}); // Reset błędów
+    setErrors({}); 
 
     if (!validate()) return;
 
@@ -114,7 +114,8 @@ const RegisterPage: React.FC = () => {
             id="confirmPassword"
             type="password"
             value={confirmPassword}
-            onChange={(e) => setPassword(e.target.value)}
+            // POPRAWKA: Tutaj poprawnie wywołujemy setConfirmPassword zamiast setPassword
+            onChange={(e) => setConfirmPassword(e.target.value)} 
             required
             className={styles.input}
           />
