@@ -32,7 +32,7 @@ jobs:
 
       - name: Build backend
         working-directory: backend
-        run: mvn clean install -DskipTests
+        run: mvn clean install dependency:copy-dependencies -DskipTests
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -56,3 +56,8 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.java.binaries=backend/target/classes
+            -Dsonar.java.libraries=backend/target/dependency/*.jar
+            -Dsonar.coverage.exclusions=**/*
