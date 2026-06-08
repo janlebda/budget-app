@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import styles from "./Group.module.scss";
 import AddGroupTransaction from "./AddGroupTransaction";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import GroupDebtItem from "./GroupDebtItem"; // NOWY IMPORT
 
 interface Group {
   id: number | string;
@@ -38,17 +39,13 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
   const [debtToDelete, setDebtToDelete] = useState<GroupDebt | null>(null);
   const requestIdRef = useRef(0);
 
-  const isGroupOwner =
-    user?.id !== undefined && String(user.id) === String(group.ownerId);
-  
-  // POPRAWKA S7735: Zamiana !== na === w celu wyeliminowania zanegowanego warunku
+  const isGroupOwner = user?.id !== undefined && String(user.id) === String(group.ownerId);
   const currentUserId = user?.id === undefined ? "" : String(user.id);
 
   const getErrorMessage = (error: unknown, fallback: string) => {
     if (error instanceof Error && error.message.trim()) {
       return error.message.replace(/^Wystąpił błąd:\s*/i, "");
     }
-
     return fallback;
   };
 
@@ -62,42 +59,27 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
   const applyMembersResults = useCallback(
     ([membersResult, debtsResult]: Awaited<ReturnType<typeof loadMembersData>>) => {
       setErrorMessage("");
-
       if (membersResult.status === "fulfilled") {
         const membersData = membersResult.value;
         setMembers(membersData);
-
         if (membersData.length === 0) {
           setDebtorId("");
           setCreditorId("");
         } else {
-          setDebtorId((current) =>
-            membersData.some((member) => String(member.userId) === current)
-              ? current
-              : String(membersData[0].userId)
-          );
-          setCreditorId((current) =>
-            membersData.some((member) => String(member.userId) === current)
-              ? current
-              : String(membersData[0].userId)
-          );
+          setDebtorId((current) => membersData.some((member) => String(member.userId) === current) ? current : String(membersData[0].userId));
+          setCreditorId((current) => membersData.some((member) => String(member.userId) === current) ? current : String(membersData[0].userId));
         }
       } else {
         console.error("Błąd pobierania członków grupy:", membersResult.reason);
         setMembers([]);
-        setErrorMessage((current) =>
-          current || "Nie udało się pobrać członków grupy."
-        );
+        setErrorMessage((current) => current || "Nie udało się pobrać członków grupy.");
       }
-
       if (debtsResult.status === "fulfilled") {
         setDebts(debtsResult.value);
       } else {
         console.error("Błąd pobierania długów grupy:", debtsResult.reason);
         setDebts([]);
-        setErrorMessage((current) =>
-          current || "Nie udało się pobrać długów grupy."
-        );
+        setErrorMessage((current) => current || "Nie udało się pobrać długów grupy.");
       }
     },
     []
@@ -106,7 +88,6 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
   const refreshMembers = useCallback(async () => {
     const requestId = ++requestIdRef.current;
     const results = await loadMembersData();
-
     if (requestId !== requestIdRef.current) return;
     applyMembersResults(results);
   }, [applyMembersResults, loadMembersData]);
@@ -114,15 +95,11 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
   useEffect(() => {
     const requestId = ++requestIdRef.current;
     let ignore = false;
-
     loadMembersData().then((results) => {
       if (ignore || requestId !== requestIdRef.current) return;
       applyMembersResults(results);
     });
-
-    return () => {
-      ignore = true;
-    };
+    return () => { ignore = true; };
   }, [applyMembersResults, loadMembersData]);
 
   const handleAddMember = async () => {
@@ -130,13 +107,11 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
       setAddMemberError("Tylko właściciel grupy może dodawać członków.");
       return;
     }
-
     const email = newMemberEmail.trim();
     if (!email) {
       setAddMemberError("Podaj email użytkownika.");
       return;
     }
-
     try {
       setAddMemberError("");
       await groupsApi.addMember(group.id, email);
@@ -153,48 +128,27 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
       setErrorMessage("Tylko właściciel grupy może usuwać członków.");
       return;
     }
-
     try {
       setErrorMessage("");
       await groupsApi.removeMember(id);
       refreshMembers();
     } catch (error: unknown) {
       console.error("Błąd usuwania członka:", error);
-      setErrorMessage(
-        getErrorMessage(error, "Nie udało się usunąć członka grupy.")
-      );
+      setErrorMessage(getErrorMessage(error, "Nie udało się usunąć członka grupy."));
     }
   };
 
   const handleCreateDebt = async () => {
     const title = debtTitle.trim();
     const amount = Number(debtAmount);
-
-    if (!title) {
-      setDebtFormError("Podaj tytuł długu.");
-      return;
-    }
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setDebtFormError("Podaj kwotę większą od zera.");
-      return;
-    }
-
-    if (!debtorId || !creditorId) {
-      setDebtFormError("Wybierz dłużnika i wierzyciela.");
-      return;
-    }
-
-    if (debtorId === creditorId) {
-      setDebtFormError("Dłużnik i wierzyciel muszą być różnymi osobami.");
-      return;
-    }
-
+    if (!title) { setDebtFormError("Podaj tytuł długu."); return; }
+    if (!Number.isFinite(amount) || amount <= 0) { setDebtFormError("Podaj kwotę większą od zera."); return; }
+    if (!debtorId || !creditorId) { setDebtFormError("Wybierz dłużnika i wierzyciela."); return; }
+    if (debtorId === creditorId) { setDebtFormError("Dłużnik i wierzyciel muszą być różnymi osobami."); return; }
     if (!isGroupOwner && debtorId !== currentUserId && creditorId !== currentUserId) {
       setDebtFormError("Możesz dodać tylko dług, którego jesteś uczestnikiem.");
       return;
     }
-
     try {
       setDebtFormError("");
       await groupsApi.createDebt(group.id, debtorId, creditorId, amount, title);
@@ -209,7 +163,6 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
 
   const handleDeleteDebt = async () => {
     if (!debtToDelete) return;
-
     try {
       setErrorMessage("");
       await groupsApi.deleteDebt(debtToDelete.id);
@@ -221,31 +174,6 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
     }
   };
 
-  const canManageDebt = (debt: GroupDebt) =>
-    isGroupOwner ||
-    String(debt.debtor.id) === currentUserId ||
-    String(debt.creditor.id) === currentUserId;
-
-  const canMarkDebtAsPaid = (debt: GroupDebt) =>
-    String(debt.debtor.id) === currentUserId && !debt.paidByDebtor;
-
-  const canConfirmDebtPayment = (debt: GroupDebt) =>
-    String(debt.creditor.id) === currentUserId &&
-    debt.paidByDebtor &&
-    !debt.confirmedByCreditor;
-
-  const getDebtStatusLabel = (debt: GroupDebt) => {
-    if (debt.confirmedByCreditor) return "Spłata potwierdzona";
-    if (debt.paidByDebtor) return "Oczekuje na potwierdzenie";
-    return "Nieopłacony";
-  };
-
-  const getDebtStatusStyle = (debt: GroupDebt) => {
-    if (debt.confirmedByCreditor) return styles.statusPaid;
-    if (debt.paidByDebtor) return styles.statusPending;
-    return styles.statusOpen;
-  };
-
   const handleMarkDebtAsPaid = async (debtId: number | string) => {
     try {
       setErrorMessage("");
@@ -253,9 +181,7 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
       refreshMembers();
     } catch (error: unknown) {
       console.error("Błąd oznaczania długu jako opłaconego:", error);
-      setErrorMessage(
-        getErrorMessage(error, "Nie udało się oznaczyć długu jako opłaconego.")
-      );
+      setErrorMessage(getErrorMessage(error, "Nie udało się oznaczyć długu jako opłaconego."));
     }
   };
 
@@ -266,100 +192,46 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
       refreshMembers();
     } catch (error: unknown) {
       console.error("Błąd potwierdzania spłaty długu:", error);
-      setErrorMessage(
-        getErrorMessage(error, "Nie udało się potwierdzić spłaty długu.")
-      );
+      setErrorMessage(getErrorMessage(error, "Nie udało się potwierdzić spłaty długu."));
     }
   };
 
   return (
     <div className={styles.container}>
-      <button onClick={onBack} className={styles.backButton}>
-        Wróć do grup
-      </button>
+      <button onClick={onBack} className={styles.backButton}>Wróć do grup</button>
       <h2>Członkowie grupy: {group.name}</h2>
-
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-      {!isGroupOwner && (
-        <p className={styles.infoMessage}>
-          Tylko właściciel grupy może dodawać i usuwać członków.
-        </p>
-      )}
+      {!isGroupOwner && <p className={styles.infoMessage}>Tylko właściciel grupy może dodawać i usuwać członków.</p>}
 
       {isGroupOwner && (
         <>
           <div className={styles.form}>
-            <input
-              type="text"
-              placeholder="Email użytkownika"
-              value={newMemberEmail}
-              onChange={(e) => setNewMemberEmail(e.target.value)}
-            />
+            <input type="text" placeholder="Email użytkownika" value={newMemberEmail} onChange={(e) => setNewMemberEmail(e.target.value)} />
             <button onClick={handleAddMember}>Dodaj członka</button>
           </div>
-          {addMemberError && (
-            <p className={styles.errorMessage}>{addMemberError}</p>
-          )}
+          {addMemberError && <p className={styles.errorMessage}>{addMemberError}</p>}
         </>
       )}
 
-      <AddGroupTransaction
-        groupId={group.id}
-        members={members}
-        onTransactionAdded={refreshMembers}
-      />
+      <AddGroupTransaction groupId={group.id} members={members} onTransactionAdded={refreshMembers} />
 
       {members.length > 1 && (
         <div className={styles.debtForm}>
           <h3>Dodaj ręczny dług</h3>
           <div className={styles.formsContainer}>
-            <input
-              type="text"
-              placeholder="Tytuł"
-              value={debtTitle}
-              onChange={(e) => setDebtTitle(e.target.value)}
-              className={styles.input}
-            />
-            <input
-              type="number"
-              min="0.01"
-              step="0.01"
-              placeholder="Kwota"
-              value={debtAmount}
-              onChange={(e) => setDebtAmount(e.target.value)}
-              className={styles.input}
-            />
-            <select
-              value={debtorId}
-              onChange={(e) => setDebtorId(e.target.value)}
-              className={styles.input}
-            >
+            <input type="text" placeholder="Tytuł" value={debtTitle} onChange={(e) => setDebtTitle(e.target.value)} className={styles.input} />
+            <input type="number" min="0.01" step="0.01" placeholder="Kwota" value={debtAmount} onChange={(e) => setDebtAmount(e.target.value)} className={styles.input} />
+            <select value={debtorId} onChange={(e) => setDebtorId(e.target.value)} className={styles.input}>
               <option value="">Dłużnik</option>
-              {members.map((member) => (
-                <option key={member.id} value={member.userId}>
-                  {member.userEmail}
-                </option>
-              ))}
+              {members.map((member) => <option key={member.id} value={member.userId}>{member.userEmail}</option>)}
             </select>
-            <select
-              value={creditorId}
-              onChange={(e) => setCreditorId(e.target.value)}
-              className={styles.input}
-            >
+            <select value={creditorId} onChange={(e) => setCreditorId(e.target.value)} className={styles.input}>
               <option value="">Wierzyciel</option>
-              {members.map((member) => (
-                <option key={member.id} value={member.userId}>
-                  {member.userEmail}
-                </option>
-              ))}
+              {members.map((member) => <option key={member.id} value={member.userId}>{member.userEmail}</option>)}
             </select>
-            <button type="button" className={styles.button} onClick={handleCreateDebt}>
-              Dodaj dług
-            </button>
+            <button type="button" className={styles.button} onClick={handleCreateDebt}>Dodaj dług</button>
           </div>
-          {debtFormError && (
-            <p className={styles.errorMessage}>{debtFormError}</p>
-          )}
+          {debtFormError && <p className={styles.errorMessage}>{debtFormError}</p>}
         </div>
       )}
 
@@ -367,16 +239,9 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
         {members.map((member) => (
           <li key={member.id}>
             {member.userEmail}
-            {String(member.userId) === String(group.ownerId) && (
-              <span className={styles.adminLabel}>(admin)</span>
-            )}
+            {String(member.userId) === String(group.ownerId) && <span className={styles.adminLabel}>(admin)</span>}
             {isGroupOwner && String(member.userId) !== String(group.ownerId) && (
-              <button
-                className={styles.deleteButton}
-                onClick={() => handleRemove(member.id)}
-              >
-                Usuń
-              </button>
+              <button className={styles.deleteButton} onClick={() => handleRemove(member.id)}>Usuń</button>
             )}
           </li>
         ))}
@@ -387,46 +252,16 @@ const GroupMembersPage = ({ group, onBack }: Props) => {
           <h3>Długi w grupie:</h3>
           <ul className={styles.debtsList}>
             {debts.map((debt) => (
-              <li key={debt.id}>
-                <strong className={styles.debtorName}>
-                  {debt.debtor.email}
-                </strong>{" "}
-                jest winien{" "}
-                <strong className={styles.creditorName}>
-                  {debt.creditor.email}
-                </strong>{" "}
-                {debt.amount.toFixed(2)} zł za <strong>{debt.title}</strong>
-                <span className={`${styles.statusBadge} ${getDebtStatusStyle(debt)}`}>
-                  {getDebtStatusLabel(debt)}
-                </span>
-                {canMarkDebtAsPaid(debt) && (
-                  <button
-                    type="button"
-                    className={styles.button}
-                    onClick={() => handleMarkDebtAsPaid(debt.id)}
-                  >
-                    Oznacz jako opłacony
-                  </button>
-                )}
-                {canConfirmDebtPayment(debt) && (
-                  <button
-                    type="button"
-                    className={styles.button}
-                    onClick={() => handleConfirmDebtPayment(debt.id)}
-                  >
-                    Potwierdź spłatę
-                  </button>
-                )}
-                {canManageDebt(debt) && (
-                  <button
-                    type="button"
-                    className={styles.deleteButton}
-                    onClick={() => setDebtToDelete(debt)}
-                  >
-                    Usuń
-                  </button>
-                )}
-              </li>
+              // Użycie tego samego wydzielonego komponentu w celu eliminacji duplikacji kodu
+              <GroupDebtItem
+                key={debt.id}
+                debt={debt}
+                currentUserId={currentUserId}
+                isGroupOwner={isGroupOwner}
+                onMarkAsPaid={handleMarkDebtAsPaid}
+                onConfirmPayment={handleConfirmDebtPayment}
+                onDelete={setDebtToDelete}
+              />
             ))}
           </ul>
         </div>

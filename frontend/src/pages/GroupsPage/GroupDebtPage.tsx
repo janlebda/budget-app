@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./Group.module.scss";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import GroupDebtItem from "./GroupDebtItem"; // NOWY IMPORT
 
 const GroupDebtsPage = () => {
   const { groupId } = useParams();
@@ -12,31 +13,24 @@ const GroupDebtsPage = () => {
   const [ownerId, setOwnerId] = useState<Id | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [debtToDelete, setDebtToDelete] = useState<GroupDebt | null>(null);
-  
-  // POPRAWKA S7735: Zamiana !== na === w celu wyeliminowania zanegowanego warunku
   const currentUserId = user?.id === undefined ? "" : String(user.id);
 
   const getErrorMessage = (error: unknown, fallback: string) => {
     if (error instanceof Error && error.message.trim()) {
       return error.message.replace(/^Wystąpił błąd:\s*/i, "");
     }
-
     return fallback;
   };
 
   const fetchDebtsData = useCallback(async () => {
     if (!groupId) return null;
-
     const [debtsData, groupsData] = await Promise.all([
       groupsApi.getDebts(groupId),
       groupsApi.getGroups(),
     ]);
-
     return {
       debtsData,
-      ownerId:
-        groupsData.find((group) => String(group.id) === String(groupId))
-          ?.ownerId ?? null,
+      ownerId: groupsData.find((group) => String(group.id) === String(groupId))?.ownerId ?? null,
     };
   }, [groupId]);
 
@@ -44,7 +38,6 @@ const GroupDebtsPage = () => {
     try {
       const data = await fetchDebtsData();
       if (!data) return;
-
       setErrorMessage("");
       setDebts(data.debtsData);
       setOwnerId(data.ownerId);
@@ -57,7 +50,6 @@ const GroupDebtsPage = () => {
 
   useEffect(() => {
     let ignore = false;
-
     fetchDebtsData()
       .then((data) => {
         if (ignore || !data) return;
@@ -71,15 +63,11 @@ const GroupDebtsPage = () => {
         setDebts([]);
         setErrorMessage(getErrorMessage(error, "Nie udało się pobrać długów grupy."));
       });
-
-    return () => {
-      ignore = true;
-    };
+    return () => { ignore = true; };
   }, [fetchDebtsData]);
 
   const handleDeleteDebt = async () => {
     if (!debtToDelete) return;
-
     try {
       setErrorMessage("");
       await groupsApi.deleteDebt(debtToDelete.id);
@@ -91,31 +79,6 @@ const GroupDebtsPage = () => {
     }
   };
 
-  const canManageDebt = (debt: GroupDebt) =>
-    String(ownerId) === currentUserId ||
-    String(debt.debtor.id) === currentUserId ||
-    String(debt.creditor.id) === currentUserId;
-
-  const canMarkDebtAsPaid = (debt: GroupDebt) =>
-    String(debt.debtor.id) === currentUserId && !debt.paidByDebtor;
-
-  const canConfirmDebtPayment = (debt: GroupDebt) =>
-    String(debt.creditor.id) === currentUserId &&
-    debt.paidByDebtor &&
-    !debt.confirmedByCreditor;
-
-  const getDebtStatusLabel = (debt: GroupDebt) => {
-    if (debt.confirmedByCreditor) return "Spłata potwierdzona";
-    if (debt.paidByDebtor) return "Oczekuje na potwierdzenie";
-    return "Nieopłacony";
-  };
-
-  const getDebtStatusStyle = (debt: GroupDebt) => {
-    if (debt.confirmedByCreditor) return styles.statusPaid;
-    if (debt.paidByDebtor) return styles.statusPending;
-    return styles.statusOpen;
-  };
-
   const handleMarkDebtAsPaid = async (debtId: Id) => {
     try {
       setErrorMessage("");
@@ -123,9 +86,7 @@ const GroupDebtsPage = () => {
       refreshDebts();
     } catch (error: unknown) {
       console.error("Błąd oznaczania długu jako opłaconego:", error);
-      setErrorMessage(
-        getErrorMessage(error, "Nie udało się oznaczyć długu jako opłaconego.")
-      );
+      setErrorMessage(getErrorMessage(error, "Nie udało się oznaczyć długu jako opłaconego."));
     }
   };
 
@@ -136,58 +97,27 @@ const GroupDebtsPage = () => {
       refreshDebts();
     } catch (error: unknown) {
       console.error("Błąd potwierdzania spłaty długu:", error);
-      setErrorMessage(
-        getErrorMessage(error, "Nie udało się potwierdzić spłaty długu.")
-      );
+      setErrorMessage(getErrorMessage(error, "Nie udało się potwierdzić spłaty długu."));
     }
   };
 
   return (
     <div className={styles.container}>
       <h2>Długi w grupie</h2>
-
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
       <ul className={styles.debtsList}>
         {debts.map((debt) => (
-          <li key={debt.id}>
-            <strong className={styles.debtorName}>{debt.debtor.email}</strong>{" "}
-            jest winien{" "}
-            <strong className={styles.creditorName}>
-              {debt.creditor.email}
-            </strong>{" "}
-            {debt.amount.toFixed(2)} zł za <strong>{debt.title}</strong>
-            <span className={`${styles.statusBadge} ${getDebtStatusStyle(debt)}`}>
-              {getDebtStatusLabel(debt)}
-            </span>
-            {canMarkDebtAsPaid(debt) && (
-              <button
-                type="button"
-                className={styles.button}
-                onClick={() => handleMarkDebtAsPaid(debt.id)}
-              >
-                Oznacz jako opłacony
-              </button>
-            )}
-            {canConfirmDebtPayment(debt) && (
-              <button
-                type="button"
-                className={styles.button}
-                onClick={() => handleConfirmDebtPayment(debt.id)}
-              >
-                Potwierdź spłatę
-              </button>
-            )}
-            {canManageDebt(debt) && (
-              <button
-                type="button"
-                className={styles.deleteButton}
-                onClick={() => setDebtToDelete(debt)}
-              >
-                Usuń
-              </button>
-            )}
-          </li>
+          // Użycie wyabstrahowanego komponentu usuwa duplikację kodu HTML i funkcji pomocniczych
+          <GroupDebtItem
+            key={debt.id}
+            debt={debt}
+            currentUserId={currentUserId}
+            isGroupOwner={String(ownerId) === currentUserId}
+            onMarkAsPaid={handleMarkDebtAsPaid}
+            onConfirmPayment={handleConfirmDebtPayment}
+            onDelete={setDebtToDelete}
+          />
         ))}
       </ul>
 
