@@ -99,7 +99,7 @@
 }
 
 .backButton {
-  background-color: gray;
+  background-color: #6b6b6b; // #808080 (gray) nie spełnia WCAG AA — kontrast 3.95:1, wymagane 4.5:1
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -110,7 +110,7 @@
   transition: background 0.3s;
 
   &:hover {
-    background-color: darkgray;
+    background-color: #555555;
   }
 }
 

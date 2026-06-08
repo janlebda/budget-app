@@ -119,11 +119,11 @@ table {
 
 .cancel {
   @extend .button;
-  background-color: gray;
+  background-color: #6b6b6b; // #808080 (gray) nie spełnia WCAG AA — kontrast 3.95:1, wymagane 4.5:1
   color: white;
 
   &:hover {
-    background-color: darkgray;
+    background-color: #555555;
   }
 }
 

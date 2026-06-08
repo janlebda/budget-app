@@ -130,13 +130,13 @@ Transaction creditorTx = new Transaction();
 creditorTx.setAmount(debt.getAmount());
 creditorTx.setType(TransactionType.INCOME);
 creditorTx.setUser(debt.getCreditor());
-        creditorTx.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
+creditorTx.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
 // Dłużnik oddaje pieniądze (EXPENSE)
 Transaction debtorTx = new Transaction();
 debtorTx.setAmount(debt.getAmount());
 debtorTx.setType(TransactionType.EXPENSE);
 debtorTx.setUser(debt.getDebtor());
-debtorTx.setTimestamp(LocalDateTime.now());
+debtorTx.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
 debtorTx.setNotes("Splat długu dla " + debt.getCreditor().getEmail() + ": " + debt.getTitle());
 debtorTx.setTags("DebtSettlement");
 transactionRepository.save(debtorTx);

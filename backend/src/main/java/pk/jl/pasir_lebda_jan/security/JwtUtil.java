@@ -43,7 +43,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .claims(claims)
                 .subject(user.getEmail())
-                .issuedAt(Date.from(now))
+                .issuedAt(Date.from(now)) 
                 .expiration(Date.from(now.plusMillis(EXPIRATION_MS)))
                 .signWith(key, Jwts.SIG.HS512)
                 .compact();

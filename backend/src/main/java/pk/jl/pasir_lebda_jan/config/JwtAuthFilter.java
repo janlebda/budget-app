@@ -1,9 +1,6 @@
 package pk.jl.pasir_lebda_jan.config;
 
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +16,6 @@ import pk.jl.pasir_lebda_jan.security.JwtUtil;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthFilter.class);
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
@@ -51,7 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                LOGGER.warn("Błąd parseowania tokena JWT: {}", e.getMessage(), e);
+                System.out.println("Błąd parseowania tokena JWT: " + e.getMessage());
             }
         }
         filterChain.doFilter(request, response);

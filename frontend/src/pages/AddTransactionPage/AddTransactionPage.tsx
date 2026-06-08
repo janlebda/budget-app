@@ -33,7 +33,7 @@ const AddTransactionPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -63,21 +63,23 @@ const AddTransactionPage = () => {
       <h2>Dodaj Transakcję</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label>Kwota:</label>
-          <input 
-            type="number" 
-            value={amount} 
-            onChange={(e) => setAmount(parseFloat(e.target.value))} 
-            required 
+          <label htmlFor="amount">Kwota:</label>
+          <input
+            id="amount"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(Number.parseFloat(e.target.value))}
+            required
             className={styles.input}
           />
           {errors.amount && <ErrorMessage message={errors.amount} />}
         </div>
         <div className={styles.formGroup}>
-          <label>Typ:</label>
-          <select 
-            value={type} 
-            onChange={(e) => setType(e.target.value as 'INCOME' | 'EXPENSE')} 
+          <label htmlFor="type">Typ:</label>
+          <select
+            id="type"
+            value={type}
+            onChange={(e) => setType(e.target.value as 'INCOME' | 'EXPENSE')}
             className={styles.input}
           >
             <option value="INCOME">Przychód</option>
@@ -86,20 +88,22 @@ const AddTransactionPage = () => {
           {errors.type && <ErrorMessage message={errors.type} />}
         </div>
         <div className={styles.formGroup}>
-          <label>Tag:</label>
-          <input 
-            type="text" 
-            value={tags} 
-            onChange={(e) => setTags(e.target.value)} 
+          <label htmlFor="tags">Tag:</label>
+          <input
+            id="tags"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
             placeholder="np. jedzenie"
             className={styles.input}
           />
         </div>
         <div className={styles.formGroup}>
-          <label>Notatki:</label>
-          <textarea 
-            value={notes} 
-            onChange={(e) => setNotes(e.target.value)} 
+          <label htmlFor="notes">Notatki:</label>
+          <textarea
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder="Dodatkowe informacje"
             className={styles.textarea}
           />
@@ -109,7 +113,7 @@ const AddTransactionPage = () => {
       </form>
 
       {showDialog && (
-        <CustomDialog 
+        <CustomDialog
           title="Błąd"
           message={dialogMessage}
           onClose={closeDialog}

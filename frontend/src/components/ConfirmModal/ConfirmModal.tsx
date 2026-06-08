@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import React, { type ReactNode, useEffect, useRef } from "react";
 import styles from "./ConfirmModal.module.scss";
 
 interface ConfirmModalProps {
@@ -20,29 +20,33 @@ const ConfirmModal = ({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+
+    if (visible) {
+      dialog.addEventListener("keydown", handleKeyDown);
+    }
+    return () => dialog.removeEventListener("keydown", handleKeyDown);
+  }, [visible, onCancel]);
+
   if (!visible) return null;
 
-  const handleOverlayKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " " || event.key === "Escape") {
-      onCancel();
-    }
-  };
-
   return (
-    <div
-      className={styles.modalOverlay}
-      role="button"
-      tabIndex={0}
-      onClick={onCancel}
-      onKeyDown={handleOverlayKeyDown}
-      onTouchStart={onCancel}
-    >
+    <div className={styles.modalOverlay} onClick={onCancel} aria-hidden="true">
       <dialog
+        ref={dialogRef}
         className={styles.modal}
         open
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <h3 id="confirm-modal-title">{title}</h3>
         <p>{message}</p>

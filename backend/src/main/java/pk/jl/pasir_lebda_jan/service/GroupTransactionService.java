@@ -58,7 +58,7 @@ Transaction transaction = new Transaction();
 transaction.setAmount(transactionDTO.getAmount());
 transaction.setType("EXPENSE".equals(transactionDTO.getType()) ? TransactionType.EXPENSE : TransactionType.INCOME);
 transaction.setUser(currentUser);
-transaction.setTimestamp(LocalDateTime.now());
+transaction.setTimestamp(LocalDateTime.now(ZoneId.systemDefault()));
 transaction.setNotes("Wydatek grupowy: " + transactionDTO.getTitle() + " w grupie " + group.getName());
 transaction.setTags("Group");
 transactionRepository.save(transaction);

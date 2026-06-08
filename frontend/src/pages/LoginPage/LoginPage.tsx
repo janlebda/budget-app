@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     try {
@@ -41,23 +41,25 @@ const LoginPage: React.FC = () => {
       <h2 className={styles.title}>Logowanie</h2>
       <form onSubmit={handleLogin} className={styles.form}>
         <div className={styles.formGroup}>
-          <label>Email:</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
+          <label htmlFor="email">Email:</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
             className={styles.input}
           />
           {error && <ErrorMessage message={error} />}
         </div>
         <div className={styles.formGroup}>
-          <label>Hasło:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
+          <label htmlFor="password">Hasło:</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
             className={styles.input}
           />
         </div>

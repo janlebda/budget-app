@@ -34,10 +34,11 @@ const AddGroupTransaction = ({
 
   const memberIds = useMemo(() => members.map((member) => member.userId), [members]);
   const effectiveSelectedUserIds = useMemo(() => {
-    if (!hasCustomParticipants) return memberIds;
-
-    const existingMemberIds = new Set(memberIds.map(String));
-    return selectedUserIds.filter((id) => existingMemberIds.has(String(id)));
+    if (hasCustomParticipants) {
+      const existingMemberIds = new Set(memberIds.map(String));
+      return selectedUserIds.filter((id) => existingMemberIds.has(String(id)));
+    }
+    return memberIds;
   }, [hasCustomParticipants, memberIds, selectedUserIds]);
 
   const getErrorMessage = (error: unknown, fallback: string) => {
@@ -50,18 +51,16 @@ const AddGroupTransaction = ({
 
   const toggleUserSelection = (userId: Id) => {
     setHasCustomParticipants(true);
-    setSelectedUserIds((current) =>
-      (hasCustomParticipants ? current : memberIds).some(
-        (id) => String(id) === String(userId)
-      )
-        ? (hasCustomParticipants ? current : memberIds).filter(
-            (id) => String(id) !== String(userId)
-          )
-        : [...(hasCustomParticipants ? current : memberIds), userId]
-    );
+    setSelectedUserIds((current) => {
+      const activeList = hasCustomParticipants ? current : memberIds;
+      const isSelected = activeList.some((id) => String(id) === String(userId));
+      return isSelected
+        ? activeList.filter((id) => String(id) !== String(userId))
+        : [...activeList, userId];
+    });
   };
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsedAmount = Number(amount);
     const uniqueSelectedUserIds = Array.from(
